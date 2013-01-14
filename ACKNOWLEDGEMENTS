@@ -1,0 +1,43 @@
+     Berkeley Yacc owes much to the unflagging efforts of Keith Bostic.  His
+badgering kept me working on it long after I was ready to quit.
+
+     Berkeley Yacc is based on the excellent algorithm for computing LALR(1)
+lookaheads developed by Tom Pennello and Frank DeRemer.  The algorithm is
+described in their almost impenetrable article in TOPLAS 4,4.
+
+     Finally, much of the credit for the latest version must go to those who
+pointed out deficiencies of my earlier releases.  Among the most prolific
+contributors were
+
+	  Benson I. Margulies
+	  Dave Gentzel
+	  Antoine Verheijen
+	  Peter S. Housel
+	  Dale Smith
+	  Ozan Yigit
+	  John Campbell
+	  Bill Sommerfeld
+	  Paul Hilfinger
+	  Gary Bridgewater
+	  Dave Bakken
+	  Dan Lanciani
+	  Richard Sargent
+	  Parag Patel
+
+
+Patches to version 1.6 to produce Perl code by
+
+	 Ray Lischner
+	 uunet!mntgfx!lisch
+	 lisch@dad.mentor.com
+
+
+Patches to version 1.8 to produce Perl code by
+
+	 Rick Ohnemus
+	 uunet!sparky!rick
+	 rick@IMD.Sterling.COM
+
+	NOTE: 1.8 Perl patches are based heavily on 1.6 Perl patches.
+	I just integrated the 1.6 patches with Berkeley yacc 1.8 and
+	fixed a few bugs.

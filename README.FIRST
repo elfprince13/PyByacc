@@ -1,0 +1,61 @@
+ +++ WARNING - WARNING - WARNING - WARNING - WARNING - WARNING - WARNING +++
+
+The '-p' option (generate PERL code) has been changed to '-P'. This is for
+compatibility with versions of yacc that use '-p' to specify a new prefix for
+generated symbols.
+
+Also, be sure to edit the Makefile. It has changed a bit since 1.8.1
+
+With that out of the way...
+
+The '-p' option is now used to change the prefix of generated symbols to
+something other than the default of "yy". See the man page for further
+details.
+
+I apologize for breaking any makefiles but, I believe that '-p' for prefix
+changing has been around longer than '-p' for generating PERL.
+
+
+This has been compiled and tested on:
+
+	Amiga 3000 with AmigaDOS 2.1 and SAS C 6.1
+
+	SUN SPARC systems running SunOS 4.1_PSR_A and 4.1.[123] with
+	the bundled compiler, gcc 2.3.3, and clcc
+
+Any modifications to make it more portable are welcome.
+
+Please report any bugs to rick@IMD.Sterling.COM
+
+
+Change History for PERL Berkeley yacc:
+
+1.8	first version of Berkeley yacc 1.8 with PERL support
+
+1.8.1	reformatted Makefile
+	add warning about '-r' option with PERL code generation
+	escape '$' in state name table in PERL code
+	updated PERL version of getdate.y in test directory
+	replace a hard coded value of 13 in reader.c with
+	'sizeof("$end") + sizeof("$accept")' (let the compiler
+	figure out the size)
+
+1.8.2	changed '-p' (PERL) switch to '-P'
+	added '-p prefix' switch to allow changing symbol prefix in
+	  generated code
+	fixed small memory leak in copy_action function in reader.c
+	base the name of temporary files on the program name (PROGRAM
+	  variable in Makefile) instead of always using a prefix of 'yacc'
+	out of memory checks now take place in only 3 functions instead
+	  of all over the place (added my_calloc, my_malloc, and
+	  my_realloc functions)
+	added manpage rule to Makefile that generates a manual page
+	  for the name in the Makefile variable PROGRAM. (see Makefile
+	  for further details)
+	added tests rule to Makefile that runs the new yacc program
+	  on the yacc files in the test directory and compares the
+	  output to the files in the test directory
+	added Makefile to test directory
+	updated PERL version of getdate.y in test directory
+	ported to the AMIGA using SAS C 6.1
+	added library that contains main() and yyerror()

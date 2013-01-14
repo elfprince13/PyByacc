@@ -1,0 +1,508 @@
+   0  $accept : timedate $end
+
+   1  timedate :
+   2           | timedate item
+
+   3  item : tspec
+   4       | zone
+   5       | dtspec
+   6       | dyspec
+   7       | rspec
+   8       | nspec
+
+   9  nspec : NUMBER
+
+  10  tspec : NUMBER MERIDIAN
+  11        | NUMBER ':' NUMBER
+  12        | NUMBER ':' NUMBER MERIDIAN
+  13        | NUMBER ':' NUMBER NUMBER
+  14        | NUMBER ':' NUMBER ':' NUMBER
+  15        | NUMBER ':' NUMBER ':' NUMBER MERIDIAN
+  16        | NUMBER ':' NUMBER ':' NUMBER NUMBER
+
+  17  zone : ZONE
+  18       | DAYZONE
+
+  19  dyspec : DAY
+  20         | DAY ','
+  21         | NUMBER DAY
+
+  22  dtspec : NUMBER '/' NUMBER
+  23         | NUMBER '/' NUMBER '/' NUMBER
+  24         | MONTH NUMBER
+  25         | MONTH NUMBER ',' NUMBER
+  26         | MONTH NUMBER NUMBER ':' NUMBER
+  27         | MONTH NUMBER NUMBER ':' NUMBER ':' NUMBER
+  28         | MONTH NUMBER NUMBER
+  29         | NUMBER MONTH
+  30         | NUMBER MONTH NUMBER
+
+  31  rspec : NUMBER UNIT
+  32        | NUMBER MUNIT
+  33        | NUMBER SUNIT
+  34        | UNIT
+  35        | MUNIT
+  36        | SUNIT
+  37        | rspec AGO
+
+state 0
+	$accept : . timedate $end  (0)
+	timedate : .  (1)
+
+	.  reduce 1
+
+	timedate  goto 1
+
+
+state 1
+	$accept : timedate . $end  (0)
+	timedate : timedate . item  (2)
+
+	$end  accept
+	MONTH  shift 2
+	DAY  shift 3
+	NUMBER  shift 4
+	UNIT  shift 5
+	MUNIT  shift 6
+	SUNIT  shift 7
+	ZONE  shift 8
+	DAYZONE  shift 9
+	.  error
+
+	item  goto 10
+	tspec  goto 11
+	zone  goto 12
+	dtspec  goto 13
+	dyspec  goto 14
+	rspec  goto 15
+	nspec  goto 16
+
+
+state 2
+	dtspec : MONTH . NUMBER  (24)
+	dtspec : MONTH . NUMBER ',' NUMBER  (25)
+	dtspec : MONTH . NUMBER NUMBER ':' NUMBER  (26)
+	dtspec : MONTH . NUMBER NUMBER ':' NUMBER ':' NUMBER  (27)
+	dtspec : MONTH . NUMBER NUMBER  (28)
+
+	NUMBER  shift 17
+	.  error
+
+
+state 3
+	dyspec : DAY .  (19)
+	dyspec : DAY . ','  (20)
+
+	','  shift 18
+	$end  reduce 19
+	MONTH  reduce 19
+	DAY  reduce 19
+	NUMBER  reduce 19
+	UNIT  reduce 19
+	MUNIT  reduce 19
+	SUNIT  reduce 19
+	ZONE  reduce 19
+	DAYZONE  reduce 19
+
+
+4: shift/reduce conflict (shift 19, reduce 9) on MONTH
+4: shift/reduce conflict (shift 20, reduce 9) on DAY
+4: shift/reduce conflict (shift 22, reduce 9) on UNIT
+4: shift/reduce conflict (shift 23, reduce 9) on MUNIT
+4: shift/reduce conflict (shift 24, reduce 9) on SUNIT
+state 4
+	nspec : NUMBER .  (9)
+	tspec : NUMBER . MERIDIAN  (10)
+	tspec : NUMBER . ':' NUMBER  (11)
+	tspec : NUMBER . ':' NUMBER MERIDIAN  (12)
+	tspec : NUMBER . ':' NUMBER NUMBER  (13)
+	tspec : NUMBER . ':' NUMBER ':' NUMBER  (14)
+	tspec : NUMBER . ':' NUMBER ':' NUMBER MERIDIAN  (15)
+	tspec : NUMBER . ':' NUMBER ':' NUMBER NUMBER  (16)
+	dyspec : NUMBER . DAY  (21)
+	dtspec : NUMBER . '/' NUMBER  (22)
+	dtspec : NUMBER . '/' NUMBER '/' NUMBER  (23)
+	dtspec : NUMBER . MONTH  (29)
+	dtspec : NUMBER . MONTH NUMBER  (30)
+	rspec : NUMBER . UNIT  (31)
+	rspec : NUMBER . MUNIT  (32)
+	rspec : NUMBER . SUNIT  (33)
+
+	MONTH  shift 19
+	DAY  shift 20
+	MERIDIAN  shift 21
+	UNIT  shift 22
+	MUNIT  shift 23
+	SUNIT  shift 24
+	':'  shift 25
+	'/'  shift 26
+	$end  reduce 9
+	NUMBER  reduce 9
+	ZONE  reduce 9
+	DAYZONE  reduce 9
+
+
+state 5
+	rspec : UNIT .  (34)
+
+	.  reduce 34
+
+
+state 6
+	rspec : MUNIT .  (35)
+
+	.  reduce 35
+
+
+state 7
+	rspec : SUNIT .  (36)
+
+	.  reduce 36
+
+
+state 8
+	zone : ZONE .  (17)
+
+	.  reduce 17
+
+
+state 9
+	zone : DAYZONE .  (18)
+
+	.  reduce 18
+
+
+state 10
+	timedate : timedate item .  (2)
+
+	.  reduce 2
+
+
+state 11
+	item : tspec .  (3)
+
+	.  reduce 3
+
+
+state 12
+	item : zone .  (4)
+
+	.  reduce 4
+
+
+state 13
+	item : dtspec .  (5)
+
+	.  reduce 5
+
+
+state 14
+	item : dyspec .  (6)
+
+	.  reduce 6
+
+
+state 15
+	item : rspec .  (7)
+	rspec : rspec . AGO  (37)
+
+	AGO  shift 27
+	$end  reduce 7
+	MONTH  reduce 7
+	DAY  reduce 7
+	NUMBER  reduce 7
+	UNIT  reduce 7
+	MUNIT  reduce 7
+	SUNIT  reduce 7
+	ZONE  reduce 7
+	DAYZONE  reduce 7
+
+
+state 16
+	item : nspec .  (8)
+
+	.  reduce 8
+
+
+17: shift/reduce conflict (shift 28, reduce 24) on NUMBER
+state 17
+	dtspec : MONTH NUMBER .  (24)
+	dtspec : MONTH NUMBER . ',' NUMBER  (25)
+	dtspec : MONTH NUMBER . NUMBER ':' NUMBER  (26)
+	dtspec : MONTH NUMBER . NUMBER ':' NUMBER ':' NUMBER  (27)
+	dtspec : MONTH NUMBER . NUMBER  (28)
+
+	NUMBER  shift 28
+	','  shift 29
+	$end  reduce 24
+	MONTH  reduce 24
+	DAY  reduce 24
+	UNIT  reduce 24
+	MUNIT  reduce 24
+	SUNIT  reduce 24
+	ZONE  reduce 24
+	DAYZONE  reduce 24
+
+
+state 18
+	dyspec : DAY ',' .  (20)
+
+	.  reduce 20
+
+
+19: shift/reduce conflict (shift 30, reduce 29) on NUMBER
+state 19
+	dtspec : NUMBER MONTH .  (29)
+	dtspec : NUMBER MONTH . NUMBER  (30)
+
+	NUMBER  shift 30
+	$end  reduce 29
+	MONTH  reduce 29
+	DAY  reduce 29
+	UNIT  reduce 29
+	MUNIT  reduce 29
+	SUNIT  reduce 29
+	ZONE  reduce 29
+	DAYZONE  reduce 29
+
+
+state 20
+	dyspec : NUMBER DAY .  (21)
+
+	.  reduce 21
+
+
+state 21
+	tspec : NUMBER MERIDIAN .  (10)
+
+	.  reduce 10
+
+
+state 22
+	rspec : NUMBER UNIT .  (31)
+
+	.  reduce 31
+
+
+state 23
+	rspec : NUMBER MUNIT .  (32)
+
+	.  reduce 32
+
+
+state 24
+	rspec : NUMBER SUNIT .  (33)
+
+	.  reduce 33
+
+
+state 25
+	tspec : NUMBER ':' . NUMBER  (11)
+	tspec : NUMBER ':' . NUMBER MERIDIAN  (12)
+	tspec : NUMBER ':' . NUMBER NUMBER  (13)
+	tspec : NUMBER ':' . NUMBER ':' NUMBER  (14)
+	tspec : NUMBER ':' . NUMBER ':' NUMBER MERIDIAN  (15)
+	tspec : NUMBER ':' . NUMBER ':' NUMBER NUMBER  (16)
+
+	NUMBER  shift 31
+	.  error
+
+
+state 26
+	dtspec : NUMBER '/' . NUMBER  (22)
+	dtspec : NUMBER '/' . NUMBER '/' NUMBER  (23)
+
+	NUMBER  shift 32
+	.  error
+
+
+state 27
+	rspec : rspec AGO .  (37)
+
+	.  reduce 37
+
+
+state 28
+	dtspec : MONTH NUMBER NUMBER . ':' NUMBER  (26)
+	dtspec : MONTH NUMBER NUMBER . ':' NUMBER ':' NUMBER  (27)
+	dtspec : MONTH NUMBER NUMBER .  (28)
+
+	':'  shift 33
+	$end  reduce 28
+	MONTH  reduce 28
+	DAY  reduce 28
+	NUMBER  reduce 28
+	UNIT  reduce 28
+	MUNIT  reduce 28
+	SUNIT  reduce 28
+	ZONE  reduce 28
+	DAYZONE  reduce 28
+
+
+state 29
+	dtspec : MONTH NUMBER ',' . NUMBER  (25)
+
+	NUMBER  shift 34
+	.  error
+
+
+state 30
+	dtspec : NUMBER MONTH NUMBER .  (30)
+
+	.  reduce 30
+
+
+31: shift/reduce conflict (shift 36, reduce 11) on NUMBER
+state 31
+	tspec : NUMBER ':' NUMBER .  (11)
+	tspec : NUMBER ':' NUMBER . MERIDIAN  (12)
+	tspec : NUMBER ':' NUMBER . NUMBER  (13)
+	tspec : NUMBER ':' NUMBER . ':' NUMBER  (14)
+	tspec : NUMBER ':' NUMBER . ':' NUMBER MERIDIAN  (15)
+	tspec : NUMBER ':' NUMBER . ':' NUMBER NUMBER  (16)
+
+	MERIDIAN  shift 35
+	NUMBER  shift 36
+	':'  shift 37
+	$end  reduce 11
+	MONTH  reduce 11
+	DAY  reduce 11
+	UNIT  reduce 11
+	MUNIT  reduce 11
+	SUNIT  reduce 11
+	ZONE  reduce 11
+	DAYZONE  reduce 11
+
+
+state 32
+	dtspec : NUMBER '/' NUMBER .  (22)
+	dtspec : NUMBER '/' NUMBER . '/' NUMBER  (23)
+
+	'/'  shift 38
+	$end  reduce 22
+	MONTH  reduce 22
+	DAY  reduce 22
+	NUMBER  reduce 22
+	UNIT  reduce 22
+	MUNIT  reduce 22
+	SUNIT  reduce 22
+	ZONE  reduce 22
+	DAYZONE  reduce 22
+
+
+state 33
+	dtspec : MONTH NUMBER NUMBER ':' . NUMBER  (26)
+	dtspec : MONTH NUMBER NUMBER ':' . NUMBER ':' NUMBER  (27)
+
+	NUMBER  shift 39
+	.  error
+
+
+state 34
+	dtspec : MONTH NUMBER ',' NUMBER .  (25)
+
+	.  reduce 25
+
+
+state 35
+	tspec : NUMBER ':' NUMBER MERIDIAN .  (12)
+
+	.  reduce 12
+
+
+state 36
+	tspec : NUMBER ':' NUMBER NUMBER .  (13)
+
+	.  reduce 13
+
+
+state 37
+	tspec : NUMBER ':' NUMBER ':' . NUMBER  (14)
+	tspec : NUMBER ':' NUMBER ':' . NUMBER MERIDIAN  (15)
+	tspec : NUMBER ':' NUMBER ':' . NUMBER NUMBER  (16)
+
+	NUMBER  shift 40
+	.  error
+
+
+state 38
+	dtspec : NUMBER '/' NUMBER '/' . NUMBER  (23)
+
+	NUMBER  shift 41
+	.  error
+
+
+state 39
+	dtspec : MONTH NUMBER NUMBER ':' NUMBER .  (26)
+	dtspec : MONTH NUMBER NUMBER ':' NUMBER . ':' NUMBER  (27)
+
+	':'  shift 42
+	$end  reduce 26
+	MONTH  reduce 26
+	DAY  reduce 26
+	NUMBER  reduce 26
+	UNIT  reduce 26
+	MUNIT  reduce 26
+	SUNIT  reduce 26
+	ZONE  reduce 26
+	DAYZONE  reduce 26
+
+
+40: shift/reduce conflict (shift 44, reduce 14) on NUMBER
+state 40
+	tspec : NUMBER ':' NUMBER ':' NUMBER .  (14)
+	tspec : NUMBER ':' NUMBER ':' NUMBER . MERIDIAN  (15)
+	tspec : NUMBER ':' NUMBER ':' NUMBER . NUMBER  (16)
+
+	MERIDIAN  shift 43
+	NUMBER  shift 44
+	$end  reduce 14
+	MONTH  reduce 14
+	DAY  reduce 14
+	UNIT  reduce 14
+	MUNIT  reduce 14
+	SUNIT  reduce 14
+	ZONE  reduce 14
+	DAYZONE  reduce 14
+
+
+state 41
+	dtspec : NUMBER '/' NUMBER '/' NUMBER .  (23)
+
+	.  reduce 23
+
+
+state 42
+	dtspec : MONTH NUMBER NUMBER ':' NUMBER ':' . NUMBER  (27)
+
+	NUMBER  shift 45
+	.  error
+
+
+state 43
+	tspec : NUMBER ':' NUMBER ':' NUMBER MERIDIAN .  (15)
+
+	.  reduce 15
+
+
+state 44
+	tspec : NUMBER ':' NUMBER ':' NUMBER NUMBER .  (16)
+
+	.  reduce 16
+
+
+state 45
+	dtspec : MONTH NUMBER NUMBER ':' NUMBER ':' NUMBER .  (27)
+
+	.  reduce 27
+
+
+State 4 contains 5 shift/reduce conflicts.
+State 17 contains 1 shift/reduce conflict.
+State 19 contains 1 shift/reduce conflict.
+State 31 contains 1 shift/reduce conflict.
+State 40 contains 1 shift/reduce conflict.
+
+
+16 terminals, 9 nonterminals
+38 grammar rules, 46 states

@@ -1,0 +1,100 @@
+# the name of the final executable
+PROGRAM	      = byacc
+
+LIBRARY	      = byacc.lib
+
+OPTIMIZE      = NOOPTIMIZE
+#DEBUG	      = DEBUG=FULLFLUSH
+CFLAGS	      = RESETOPTIONS ANSI NOMATH STACKCHECK STACKEXTEND NOSTRICT \
+		NOSTRINGCONST DATA=FAR CPU=68030 NOICONS NOVERBOSE \
+		DEFINE=PROGRAM="$(PROGRAM)" DEFINE=SIG_TYPE=void \
+		$(OPTIMIZE) $(INCLUDES) $(DEBUG)
+
+STARTUP	      = lib:c.o
+LIBS	      = lib:sc.lib
+LDFLAGS	      = NOICONS
+
+#AR	      = oml
+AR	      = oml -v
+CP	      = copy
+MAKE	      = smake
+RM	      = delete
+
+OBJS	      =			\
+		closure.o	\
+		error.o		\
+		lalr.o		\
+		lr0.o		\
+		main.o		\
+		mkpar.o		\
+		mktemp.o	\
+		output.o	\
+		reader.o	\
+		skeleton.o	\
+		symtab.o	\
+		verbose.o	\
+		warshall.o
+
+LIB_OBJS      = yyerror.o	\
+		yymain.o
+
+all: $(PROGRAM) $(LIBRARY)
+
+$(PROGRAM): $(OBJS)
+	$(LD) FROM $(STARTUP) $(OBJS) LIB $(LIBS) $(LDFLAGS) TO $(PROGRAM)
+
+$(LIBRARY): $(LIB_OBJS)
+	$(AR) $(LIBRARY) r $(LIB_OBJS)
+
+clean:
+	-delete \#?.o \#?!
+
+clobber: clean
+	-delete $(PROGRAM) $(LIBRARY)
+
+tests: $(PROGRAM)
+	-mkdir t
+	$(CP) test/\#?.y test/Makefile t QUIET
+	cd t
+	$(MAKE) PROGRAM=$(PROGRAM)
+	cd /
+	$(RM) t ALL QUIET
+
+### DO NOT DELETE THIS LINE - make depend needs it
+
+closure.o: closure.c
+closure.o: defs.h
+
+error.o: error.c
+error.o: defs.h
+
+lalr.o: lalr.c
+lalr.o: defs.h
+
+lr0.o: lr0.c
+lr0.o: defs.h
+
+main.o: main.c
+main.o: defs.h
+
+mkpar.o: mkpar.c
+mkpar.o: defs.h
+
+output.o: output.c
+output.o: defs.h
+
+reader.o: reader.c
+reader.o: defs.h
+
+skeleton.o: skeleton.c
+skeleton.o: defs.h
+
+symtab.o: symtab.c
+symtab.o: defs.h
+
+verbose.o: verbose.c
+verbose.o: defs.h
+
+warshall.o: warshall.c
+warshall.o: defs.h
+
