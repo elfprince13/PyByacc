@@ -18,7 +18,7 @@ reads the grammar specification in the file
 .I filename
 and generates an LR(1) parser for it.
 The parsers consist of a set of LALR(1) parsing tables and a driver routine
-written in the C or Perl programming languages.
+written in the C, Perl, or Python programming languages.
 .I byacc
 normally writes the parse tables and the driver routine to the file
 .IR y.tab.c ,

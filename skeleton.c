@@ -24,7 +24,7 @@ static char *perl_banner[] =
   
 static char *python_banner[] =
 {
-    "yysccsid = \"@(#)yaccpar 1.8 (Berkeley) 01/20/91 (Python 2.0 12/31/92)\";",
+    "#!/usr/bin/env python\nyysccsid = \"@(#)yaccpar 1.8 (Berkeley) 01/20/91 (Python 2.0 02/05/12)\";",
     (char *) NULL
 };
   
@@ -95,11 +95,17 @@ static char *python_header[] =
 {
     "import os, types",
     "def yyclearin() :",
+    "    global yychar",
     "    yychar = -1",
     "def yyerrok() :",
+    "    global yyerrflag",
     "    yyerrflag = 0",
-    "yyss = [0]",
-    "yyvs = [0]",
+    "YYSTACKSIZE = 500",
+    "def yy_clear_stacks():",
+    "    global yyss, yyvs, YYSTACKSIZE",
+    "    yyss = [0]*YYSTACKSIZE",
+    "    yyvs = [None]*YYSTACKSIZE",
+    "yy_clear_stacks()",
     (char *) NULL
 };
 
@@ -377,10 +383,12 @@ static char *perl_body[] =
 static char *python_body[] =
 {
     "def YYERROR() :",
+    "  global yynerrs",
     "  yynerrs=yynerrs+1",
     "  yy_err_recover()",
     "",
     "def yy_err_recover() :",
+    "  global yyerrflag, yyn, yystate, yyssp, yyss, yyvsp, yyvs, yystate, yylval, yychar, yydebug, yynerrs",
     "  if yyerrflag < 3 :",
     "    yyerrflag = 3",
     "    while 1 :",
@@ -389,18 +397,22 @@ static char *python_body[] =
     "        yyn = yyn + YYERRCODE",
     "        if yyn >= 0 and yycheck[yyn] == YYERRCODE :",
     "          yystate = yytable[yyn]",
-    "          yyssp=yyssp+1",
-    "          yyss.append( yystate )",
-    "          yyvsp=yyvsp+1",
-    "          yyvs.append( yylval )",
+    "          yyssp+=1",
+    "          #yyss.append( yystate )",
+    "          yyss[yyssp] = yystate ",
+    "          yyvsp+=1",
+    "          #yyvs.append( yylval )",
+    "          yyvs[yyvsp] = yylval ",
     "          return 2 #next yyloop;",
     "        else :",
     "          if yyssp <= 0 :",
     "            return 1",
-    "          yyssp=yyssp-1",
-    "          yyss.pop()",
-    "          yyvsp=yyvsp-1",
-    "          yyvs.pop()",
+    "          yyss[yyssp] = 0",
+    "          yyssp-=1",
+    "          #yyss.pop()",
+    "          yyvs[yyvsp] = None",
+    "          yyvsp-=1",
+    "          #yyvs.pop()",
     "  else :",
     "    if yychar == 0 :",
     "      return 1",
@@ -409,6 +421,7 @@ static char *python_body[] =
     "  return 0",
     "",
     "def yyparse() :",
+    "  global yyerrflag, yyn, yystate, yyssp, yyss, yyvsp, yyvs, yystate, yylval, yychar, yydebug, yynerrs",
     "  yydebug = int( os.environ.get('YYDEBUG','0') )",
     "  yynerrs = 0",
     "  yyerrflag = 0",
@@ -437,13 +450,15 @@ static char *python_body[] =
     "          if yydebug :",
     "            print 'yydebug: state ', yystate, ', shifting to state ', yytable[yyn]",
     "          yystate = yytable[yyn]",
-    "          yyssp=yyssp+1",
-    "          yyss.append( yytable[yyn] )",
-    "          yyvsp=yyvsp+1",
-    "          yyvs.append( yylval )",
+    "          yyssp+=1",
+    "          #yyss.append( yystate )",
+    "          yyss[yyssp] = yystate ",
+    "          yyvsp+=1",
+    "          #yyvs.append( yylval )",
+    "          yyvs[yyvsp] = yylval ",
     "          yychar = -1",
     "          if yyerrflag > 0 :",
-    "            --yyerrflag ",
+    "            yyerrflag -= 1",
     "          continue",
     "      yyn = yyrindex[yystate]",
     "      if yyn :",
@@ -455,7 +470,7 @@ static char *python_body[] =
     "          yyerror('syntax error')",
     "        except:"
     "          print 'No yyerror function'",
-    "        yynerrs=yynerrs+1",
+    "        yynerrs+=1",
     "      elif yy_err_recover() == 1 :",
     "        return(1)",
     "      elif yy_err_recover() == 2 :",
@@ -586,20 +601,24 @@ static char *perl_trailer[] =
 static char *python_trailer[] =
 {
     "    # switch",
-    "    yyssp = yyssp - yym",
-    "    yyss[-yym:] = []",
+    "    yyssp -= yym",
+    "    if yym:",
+    "      yyss[-yym:] = [0]*yym",
     "    yystate = yyss[yyssp]",
-    "    yyvsp = yyvsp - yym",
-    "    yyvs[-yym:] = []",
+    "    yyvsp -= yym",
+    "    if yym:",
+    "      yyvs[-yym:] = [None]*yym",
     "    yym = yylhs[yyn]",
     "    if yystate == 0 and yym == 0 :",
     "      if yydebug :",
     "        print 'yydebug: after reduction, shifting from state 0 to (final) state ', YYFINAL",
     "      yystate = YYFINAL",
-    "      yyssp=yyssp+1",
-    "      yyss.append( YYFINAL )",
-    "      yyvsp=yyvsp+1",
-    "      yyvs.append( yyval )",
+    "      yyssp+=1",
+    "      #yyss.append( YYFINAL )",
+    "      yyss[yyssp] = YYFINAL ",
+    "      yyvsp+=1",
+    "      #yyvs.append( yyval )",
+    "      yyvs[yyvsp] = yyval",
     "      if yychar < 0 :",
     "        (yychar, yylval) = yylex()",
     "        if type( yychar ) is types.StringType :",
@@ -613,6 +632,8 @@ static char *python_trailer[] =
     "      continue",
     "    yyn = yygindex[yym]",
     "    if yyn :",
+    "      if type( yyn ) is types.StringType: ",
+    "        yystate = ord(yystate)",
     "      yyn = yyn + yystate",
     "      if yyn >= 0 and yyn <= (len(yycheck)-1) and yycheck[yyn] == yystate :",
     "        yystate = yytable[yyn]",
@@ -622,10 +643,12 @@ static char *python_trailer[] =
     "      yystate = yydgoto[yym]",
     "    if yydebug :",
     "      print 'yydebug: after reduction, shifting from state ', yyss[yyssp], ' to state ', yystate",
-    "    yyssp=yyssp+1",
-    "    yyss.append( yystate )",
-    "    yyvsp=yyvsp+1",
-    "    yyvs.append( yyval )",
+    "    yyssp+=1",
+    "    #yyss.append( yystate )",
+    "    yyss[yyssp] = yystate",
+    "    yyvsp+=1",
+    "    #yyvs.append( yyval )",
+    "    yyvs[yyvsp] = yyval",
     "  # yyloop",
     "# yyparse",
     (char *) NULL
@@ -649,14 +672,14 @@ char *new_str;
 	if (*from == 'Y' && *(from + 1) == 'Y') {
 	    from += 2;
 	    p = define_prefix;
-	    while (*to++ = *p++)
+	    while ((*to++ = *p++))
 		/* void */ ;
 	    to--;
 	}
 	else if (*from == 'y' && *(from + 1) == 'y') {
 	    from += 2;
 	    p = symbol_prefix;
-	    while (*to++ = *p++)
+	    while ((*to++ = *p++))
 		/* void */ ;
 	    to--;
 	}

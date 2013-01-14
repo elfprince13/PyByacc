@@ -135,7 +135,7 @@ static void usage()
 #endif
 {
     fprintf(stderr,
-	    "usage: %s [-CPcdlrtv] [-b file_prefix] [-p symbol_prefix] filename\n",
+	    "usage: %s [-CPYcdlrtv] [-b file_prefix] [-p symbol_prefix] filename\n",
 	    myname);
     exit(1);
 }

@@ -1,4 +1,5 @@
-yysccsid = "@(#)yaccpar 1.8 (Berkeley) 01/20/91 (Python 2.0 12/31/92)";
+#!/usr/bin/env python
+yysccsid = "@(#)yaccpar 1.8 (Berkeley) 01/20/91 (Python 2.0 02/05/12)";
 #line 37 "smallcalc.y"
  
 # Python Declarations *
@@ -125,16 +126,20 @@ yyrule = [
 #endif
 import os, types
 def yyclearin() :
+    global yychar
     yychar = -1
 def yyerrok() :
+    global yyerrflag
     yyerrflag = 0
 yyss = [0]
 yyvs = [0]
 def YYERROR() :
+  global yynerrs
   yynerrs=yynerrs+1
   yy_err_recover()
 
 def yy_err_recover() :
+  global yyerrflag, yyn, yystate, yyssp, yyss, yyvsp, yyvs, yystate, yylval, yychar, yydebug, yynerrs
   if yyerrflag < 3 :
     yyerrflag = 3
     while 1 :
@@ -163,6 +168,7 @@ def yy_err_recover() :
   return 0
 
 def yyparse() :
+  global yyerrflag, yyn, yystate, yyssp, yyss, yyvsp, yyvs, yystate, yylval, yychar, yydebug, yynerrs
   yydebug = int( os.environ.get('YYDEBUG','0') )
   yynerrs = 0
   yyerrflag = 0
@@ -197,7 +203,7 @@ def yyparse() :
           yyvs.append( yylval )
           yychar = -1
           if yyerrflag > 0 :
-            --yyerrflag 
+            yyerrflag -= 1
           continue
       yyn = yyrindex[yystate]
       if yyn :
@@ -208,7 +214,7 @@ def yyparse() :
         try :
           yyerror('syntax error')
         except:          print 'No yyerror function'
-        yynerrs=yynerrs+1
+        yynerrs+=1
       elif yy_err_recover() == 1 :
         return(1)
       elif yy_err_recover() == 2 :
@@ -257,7 +263,7 @@ def yyparse() :
  
       yyval = yyvs[yyvsp-0]
     
-#line 261 "y.tab.py"
+#line 266 "y.tab.py"
     # switch
     yyssp = yyssp - yym
     yyss[-yym:] = []
@@ -269,9 +275,9 @@ def yyparse() :
       if yydebug :
         print 'yydebug: after reduction, shifting from state 0 to (final) state ', YYFINAL
       yystate = YYFINAL
-      yyssp=yyssp+1
+      yyssp+=1
       yyss.append( YYFINAL )
-      yyvsp=yyvsp+1
+      yyvsp+=1
       yyvs.append( yyval )
       if yychar < 0 :
         (yychar, yylval) = yylex()
@@ -353,4 +359,4 @@ while 1 :
   else:
     yyparse()
 
-#line 357 "y.tab.py"
+#line 362 "y.tab.py"

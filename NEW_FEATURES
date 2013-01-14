@@ -9,6 +9,8 @@ and a main program to call &yyparse.  An example of a simple calculator is
 included. A version of getdate.y that has been modified for Perl yacc is
 also included.
 
+     The -Y option causes Python code to be generated.
+
      The -r option has been implemented.  The -r option tells Yacc to put
 the read-only tables in y.tab.c and the code and variables in y.code.c.
 Keith Bostic asked for this option so that :yyfix could be eliminated.

@@ -1,0 +1,173 @@
+   0  $accept : start_expr $end
+
+   1  start_expr : expr
+   2             |
+
+   3  expr : '(' expr ')'
+   4       | expr '+' expr
+   5       | expr '-' expr
+   6       | expr '*' expr
+   7       | expr '/' expr
+   8       | INT
+
+state 0
+	$accept : . start_expr $end  (0)
+	start_expr : .  (2)
+
+	INT  shift 1
+	'('  shift 2
+	$end  reduce 2
+
+	start_expr  goto 3
+	expr  goto 4
+
+
+state 1
+	expr : INT .  (8)
+
+	.  reduce 8
+
+
+state 2
+	expr : '(' . expr ')'  (3)
+
+	INT  shift 1
+	'('  shift 2
+	.  error
+
+	expr  goto 5
+
+
+state 3
+	$accept : start_expr . $end  (0)
+
+	$end  accept
+
+
+state 4
+	start_expr : expr .  (1)
+	expr : expr . '+' expr  (4)
+	expr : expr . '-' expr  (5)
+	expr : expr . '*' expr  (6)
+	expr : expr . '/' expr  (7)
+
+	'+'  shift 6
+	'-'  shift 7
+	'*'  shift 8
+	'/'  shift 9
+	$end  reduce 1
+
+
+state 5
+	expr : '(' expr . ')'  (3)
+	expr : expr . '+' expr  (4)
+	expr : expr . '-' expr  (5)
+	expr : expr . '*' expr  (6)
+	expr : expr . '/' expr  (7)
+
+	'+'  shift 6
+	'-'  shift 7
+	'*'  shift 8
+	'/'  shift 9
+	')'  shift 10
+	.  error
+
+
+state 6
+	expr : expr '+' . expr  (4)
+
+	INT  shift 1
+	'('  shift 2
+	.  error
+
+	expr  goto 11
+
+
+state 7
+	expr : expr '-' . expr  (5)
+
+	INT  shift 1
+	'('  shift 2
+	.  error
+
+	expr  goto 12
+
+
+state 8
+	expr : expr '*' . expr  (6)
+
+	INT  shift 1
+	'('  shift 2
+	.  error
+
+	expr  goto 13
+
+
+state 9
+	expr : expr '/' . expr  (7)
+
+	INT  shift 1
+	'('  shift 2
+	.  error
+
+	expr  goto 14
+
+
+state 10
+	expr : '(' expr ')' .  (3)
+
+	.  reduce 3
+
+
+state 11
+	expr : expr . '+' expr  (4)
+	expr : expr '+' expr .  (4)
+	expr : expr . '-' expr  (5)
+	expr : expr . '*' expr  (6)
+	expr : expr . '/' expr  (7)
+
+	'*'  shift 8
+	'/'  shift 9
+	$end  reduce 4
+	'+'  reduce 4
+	'-'  reduce 4
+	')'  reduce 4
+
+
+state 12
+	expr : expr . '+' expr  (4)
+	expr : expr . '-' expr  (5)
+	expr : expr '-' expr .  (5)
+	expr : expr . '*' expr  (6)
+	expr : expr . '/' expr  (7)
+
+	'*'  shift 8
+	'/'  shift 9
+	$end  reduce 5
+	'+'  reduce 5
+	'-'  reduce 5
+	')'  reduce 5
+
+
+state 13
+	expr : expr . '+' expr  (4)
+	expr : expr . '-' expr  (5)
+	expr : expr . '*' expr  (6)
+	expr : expr '*' expr .  (6)
+	expr : expr . '/' expr  (7)
+
+	.  reduce 6
+
+
+state 14
+	expr : expr . '+' expr  (4)
+	expr : expr . '-' expr  (5)
+	expr : expr . '*' expr  (6)
+	expr : expr . '/' expr  (7)
+	expr : expr '/' expr .  (7)
+
+	.  reduce 7
+
+
+27 terminals, 3 nonterminals
+9 grammar rules, 15 states
